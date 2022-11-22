@@ -1,23 +1,26 @@
+create table newstudent(rno int, name varchar(20), marks int);
+insert into newstudent values(1,'abc',32);
+insert into newstudent values(2,'yash', 45);
+insert into newstudent values(6,'Sai', 31);
+insert into newstudent values(7,'sanski',38);
+
 declare
-rollno number;
-flag int(2);
-cusror c_roll(rollno number) is select * from oldt where id not in (select id from newt where newt.id=oldt.id);
-info new%rowtype;
+cursor cur_s is select*from student;
+cursor cur_new (a int) is select*from
+newstudent where rollno=a;
+nrec newstudent%rowtype;
 begin
-rollno:=&rollno;
-flag:=0;
-open c_roll(rollno);
-loop fetch c_rollno into info;
-exit when c_roll%notfound;
-if (info.id=rollno) then insert into newt values(info.id,info.name);
-flag:=1;
+for srec in cur_s
+loop
+open cur_new (srec.roll_no);
+fetch cur_new into nrec;
+if cur_new% notfound then
+insert into newstudent
+values(srec.roll_no,srec.name,srec.marks);
 end if;
+close cur_new;
 end loop;
-if(c_roll%rowcount=0 or flag=0 )then
-dbms_output.put_line('record already present');
-else
-dbms_output.put_line('record updated');
-end if;
-close c_roll;
 end;
 /
+
+select*from newstudent;
