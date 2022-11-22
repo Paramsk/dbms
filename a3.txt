@@ -1,0 +1,10 @@
+create view view1 as select cust_name from borrow ,loan where borrow.loan_no=loan.loan_no and branch_name="wagholi";
+create view view2 as select branch_name,branch_city from branch;
+1 update view2 set branch_name="wagholi" where branch_city="pune";
+2 insert into view2(branch_name,branch_city) values("bundgarden","mumbai");
+3 delete from view2 where branch_city="pune";
+select depositer.cust_name from depositer left join borrow on depositer.cust_name=borrow.cust_name union select borrow.cust_name from depositer right join borrow on borrow.cust_name=depositer.cust_name;
+select * from view1; //same for view2 and view 3
+create unique  index id_loanno on borrow(loan_no);
+show index from borrow;
+drop table customer;

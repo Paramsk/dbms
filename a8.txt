@@ -1,0 +1,23 @@
+declare
+rollno number;
+flag int(2);
+cusror c_roll(rollno number) is select * from oldt where id not in (select id from newt where newt.id=oldt.id);
+info new%rowtype;
+begin
+rollno:=&rollno;
+flag:=0;
+open c_roll(rollno);
+loop fetch c_rollno into info;
+exit when c_roll%notfound;
+if (info.id=rollno) then insert into newt values(info.id,info.name);
+flag:=1;
+end if;
+end loop;
+if(c_roll%rowcount=0 or flag=0 )then
+dbms_output.put_line('record already present');
+else
+dbms_output.put_line('record updated');
+end if;
+close c_roll;
+end;
+/

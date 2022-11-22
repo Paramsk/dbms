@@ -1,0 +1,39 @@
+create table borrower(roll int,name char(20),dateofissue date,nameofbook char(20),status char(2));
+create table fine(roll int,fdate date,amt int);
+insert into borrower values(101,'ram',to_date('20221127','YYYYMMDD'),'hci','i');
+insert into borrower values(102,'sai',to_date('20221027','YYYYMMDD'),'dbms','i');
+insert into borrower values(103,'laxman',to_date('20221117','YYYYMMDD'),'toc','i');
+insert into borrower values(104,'onkar',to_date('20221020','YYYYMMDD'),'spos','i');
+insert into borrower values(105,'ganesh',to_date('20221115','YYYYMMDD'),'spm','i');
+
+DECLARE
+p_nameofbook char(10);
+p_rollno number(38);
+p_dateofissue date;
+currentdate date;
+noofdays number(2);
+amount number;
+nodata EXCEPTION;
+BEGIN
+p_rollno:=&rollno;
+p_nameofbook:='&nameofbook';
+currentdate:=trunc(sysdate);
+if p_rollno<=0 then 
+	raise nodata;
+end if;
+	select dateofissue into p_dateofissue from borrower where rollno=p_rollno;
+	select trunc(sysdate)-p_dateofissue into noofdays from dual;
+	dbms_output.put_line('no of days'||noofdays);
+if(noofdays>30) then amount:=noofdays*30;
+elsif(noofdays>=15 and noofdays<=30) then amount:=noofdays*5;
+end if;
+if amount>0 then 
+	insert into fine values(p_rollno,sysdate,amount);
+end if;
+	update borrower set status='r' where rollno=p_rollno;
+EXCEPTION
+when nodata then
+	dbms_output.put_line('roll no found');
+END;
+/
+

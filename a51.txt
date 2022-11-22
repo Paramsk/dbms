@@ -1,0 +1,31 @@
+DECLARE
+p_nameofbook char(10);
+p_rollno number(3);
+p_dateofissue date;
+currentdate date;
+noofdays number(2);
+amount number;
+nodata EXCEPTION;
+BEGIN
+p_rollno:=101;
+p_nameofbook:='hci';
+currentdate:=trunc(sysdate);
+if p_rollno<=0 then 
+	raise nodata;
+end if;
+	select dateofissue into p_dateofissue from borrower where roll_no=p_rollno
+	and nameofbook=p_nameofbook;
+	select trunc(sysdate)-p_dateofissue into noofdays from dual;
+	dbms_output.put_line('no of days'||noofdays);
+if(noofdays>30) then amount:=noofdays*30;
+elsif(noofdays>=15 and noofdays<=30) then amount:=noofdays*5;
+end if;
+if amount>0 then 
+	insert into fine values(p_rollno,sysdate,amount);
+end if;
+	update borrower set status='r' where roll=p_rollno;
+EXCEPTION
+when nodata then
+	dbms_output.put_line('roll no found');
+END;
+/

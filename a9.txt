@@ -1,0 +1,227 @@
+Create table library(ro1lno int, name char(10), dateofissue date, nameofbook char(10), status char(10));
+Create table library_audit(ro1lno int, name char(10), dateofissue date, nameofbook char(10), status char(10), ts timestamp);
+
+Insert into library values (101, 'Ram',to date('20l70923','YYYYMMDD'),'DBMS', 'I'); Insert into library values (102, 'Sai',to date('20170910','YYYYMMDD'),'CN', 'I');
+Insert into library values (103, 'Laxman',to date('20l70928','YYYYMMDD'),'TOC', 'I'); Insert into library values (104, 'Sai',to date('20170825','YYYYMMDD'),'SEPM', 'I'); Insert into library values (105, 'Ganesh',to date('20170901','YYYYMMDD'),'IEEE', 'I'); Select * from library;
+Select * from library audit; SQL+ select * from library;
+ROLLNO NAME	DATEOFISS NAMEOFBOOK STATUS
+
+101	Ram	23-SEP-17 DBMS	I
+102	Sai	10-SEP-17 CN	I
+103	Laxman	28-SEP-17 TOC	I
+104	Sai	25-AUG-17 SEPM	I
+105	Ganesh	01-SEP-17 IEEE	I
+
+SQL+ Create table library audit(ro1lno int, name char(10), dateofissue date, nameofbook char(10), status char(10), ts timestamp);
+Table created.
+SQL+ select * from library audit; no rows selected
+
+
+AT"I“LR INSERT Trigger — Row Level Trigger
+
+CREATE OR REPLACE TRIGGER after_insert AFTER INSERT
+ON library
+FOR EACH ROW BEGIN
+insert into library audit values(:new.rollno, :new.name, :new.dateofissue,
+:new.nameofbook, :new.status, current timestamp);
+END;
+/
+Trigger created.
+SQL+ select * from library;
+ROLLNO NAME	DATEOFISS NAMEOFBOOK STATUS
+101	Ram	23-SEP-17 DBMS	I
+102	Sai	10-SEP-17 CN	I
+103	Laxman	28-SEP-17 TOC	I
+104	Sai	25-AUG-17 SEPM	I
+105	Ganesh	01-SEP-17 IEEE	I
+
+SQL+ select * from library audit; no rows selected
+SQL+ Insert into library values (106, 'Gajanan',to date('2017100l','YYYYMMDD'),' DDA', 'I');
+1 row created.
+SQL+ select * from library;
+ROLLNO NAME	DATEOFISS NAMEOFBOOK STATUS
+
+101	Ram	23-SEP-17 DBMS	I
+102	Sai	10-SEP-17 CN	I
+103	Laxman	28-SEP-17 TOC	I
+104	Sai	25-AUG-17 SEPM	I
+105	Ganesh	01-SEP-17 IEEE	I
+106	Gajanan	01-OCT-17 DDA	I
+6 rows selected.
+SQL+ select * from library audit;
+ROLLNO	NAME	DATEOFISS	NAMEOFBOOK	STATUS	TS 106	Gajanan	01-OCT-17	DDA		I	02-OCT-17 01.07.25.375000 PM
+
+AT"I“LR UPDA"I“L Trigger — Row Level Trigger
+
+CREATE OR REPLACE TRIGGER after_update AFTER UPDATE
+ON Library
+FOR EACH ROW BEGIN
+insert into library audit values(:o1d.rollno, :o1d.name, :o1d.dateofissue,
+:o1d.nameofbook, :old.status, current timestamp);
+END;
+/
+Trigger created.
+SQL+ select * from library;
+ROLLNO NAME	DATEOFISS NAMEOFBOOK STATUS
+
+101	Ram	23-SEP-17 DBMS	I
+102	Sai	10-SEP-17 CN	I
+103	Laxman	28-SEP-17 TOC	I
+106 Gajanan	01-OCT-17 DDA	I
+6 rows selected.
+SQL+ select * from library audit;
+ROLLNO	NAME		DATEOFISS	NAMEOFBOOK	STATUS	TS 106	Gajanan	01-OCT-17	DDA	I	02-OCT-17 01.07.25.375000 PM
+SQL+ update library set nameofbook ='MongoDB' where library.rollno=101; 1 row updated.
+
+SQL+ select * from library;
+ROLLNO NAME	DATEOFISS NAMEOFBOOK STATUS
+
+101	Ram	23-SEP-17 MongoDB	I
+102	Sai	10-SEP-17 CN	I
+103	Laxman	28-SEP-17 TOC	I
+104	Sai	25-AUG-17 SEPM	I
+105	Ganesh	01-SEP-17 IEEE	I
+106	Gajanan	01-OCT-17 DDA	I
+6 rows selected.
+
+SQL+ select * from library audit;
+ROLLNO NAME	DATEOFISS	NAMEOFBOOK	STATUS	TS
+
+
+-106	Gajanan	01-OCT-17	DDA	I	02-OCT-17 01.07.25.375000 PM
+101	Ram	23-SEP-17	DBMS	I	02-OCT-17 01.58.22.372000 PM
+
+AT"I“LR DELE l“E Trigger — Row Level Trigger CREATE TRIGGER after_delete
+AFTER DELETE
+ON Library
+FOR EACH ROW BEGIN
+insert into library audit values(:old.rollno, :o1d.name, :old.dateofissue,
+:o1d.nameofbook, :old.status, current timestamp);
+END;
+/
+Trigger created.
+SQL+ select * from library;
+ROLLNO NAME	DATEOFISS NAMEOFBOOK STATUS
+
+101	Ram	23-SEP-17 MongoDB	I
+102	Sai	10-SEP-17 CN	I
+103	Laxman	28-SEP-17 TOC	I
+106 Gajanan	01-OCT-17 DDA	I
+6 rows selected.
+
+SQL+ select * from library audit;
+ROLLNO	NAME	DATEOFISS	NAMEOFBOOK	STATUS	TS
+
+
+
+106	Gajanan	01-OCT-17	DDA	I	02-OCT-17 01.07.25.375000 PM
+101	Ram	23-SEP-17	MongoDB	I	02-OCT-17 01.58.22.372000 PM
+
+SQL+ delete from library where ro1lno=l02; 1 row deleted.
+SQL+ select * from library;
+ROLLNO NAME	DATEOFISS NAMEOFBOOK STATUS
+
+101 Ram	23-SEP-17 MongoDB	I
+103	Laxman	28-SEP-17 TOC	I
+104	Sai	25-AUG-17 SEPM	I
+105	Ganesh	01-SEP-17 IEEE	I
+106	Gajanan	01-OCT-17 DDA	I
+
+SQL+ select * from library audit;
+ROLLNO	NAME	DATEOFISS	NAMEOFBOOK	STATUS	TS
+
+
+
+102	Sai	10-SEP-17	CN	I	02-OCT-17 02.15.24.618000 PM
+106	Gajanan	01-OCT-17	DDA	I	02-OCT-17 01.07.25.375000 PM
+101	Ram	23-SEP-17	MongoDB	I	02-OCT-17 01.58.22.372000 PM
+SQL>					
+
+
+
+
+AT"I“LR Trigger — Row Level Trigger (INSERT/UPDA l“E/DELE l“E)
+
+Create table lib(ro1lno int, name char(10), dateofissue date, nameofbook char(10), status char(10));
+Create table lib audit(ro1lno int, name char(10), dateofissue date, nameofbook char(10), status char(10), ts timestamp,command varchar2(10));
+Insert into lib values (101, 'Ram',to date('20l70923','YYYYMMDD'),'DBMS', 'I'); Insert into lib values (102, 'Sai',to date('20l709l0','YYYYMMDD'),'CN', 'I');
+Insert into lib values (103, 'Laxman',to date('20l70928','YYYYMMDD'),'TOC', 'I'); Insert into lib values (104, 'Sai',to date('20170825','YYYYMMDD'),'SEPM', 'I'); Insert into lib values (105, 'Ganesh',to date('20l7090l','YYYYMMDD'),'IEEE', 'I'); Select * from lib;
+Select * from lib audit;
+
+CREATE OR REPLACE TRIGGER AT1
+AFTER INSERT OR DELETE OR UPDATE
+ 
+ON lib
+FOR EACH ROW BEGIN
+IF UPDATING THEN
+insert into lib audit values(:o1d.rollno, :o1d.name, :o1d.dateofissue,
+:o1d.nameofbook, :old.status, current timestamp, ' UPDATE');
+ELSIF INSERTING THEN
+insert into lib audit values(:new.rollno, :new.name, :new.dateofissue,
+:new.nameofbook, :new.status, current timestamp,'INSERT');
+ELSIF DELETING THEN
+insert into lib audit values(:o1d.rollno, :o1d.name, :o1d.dateofissue,
+:o1d.nameofbook, :old.status, current timestamp, 'DELETE');
+END IF;
+END;
+/
+Trigger created.
+
+***** OUTPUT *****
+*****Insert Operation*****
+SQL+ Insert into lib values(l06,'Gajanan',to date('20171001','YYYYMMDD'),'DDA','I'); 1 row created.
+SQL+ select * from lib;
+ROLLNO NAME	DATEOFISS NAMEOFBOOK STATUS
+
+101	Ram	23-SEP-17 DBMS	I
+102	Sai	10-SEP-17 CN	I
+103	Laxman	28-SEP-17 TOC	I
+104	Sai	25-AUG-17 SEPM	I
+105	Ganesh	01-SEP-17 IEEE	I
+106	Gajanan	01-OCT-17 DDA	I
+6 rows selected.
+
+SQL+ select * from lib audit;
+ROLLNO	NAME	DATEOFISS	NAMEOFBOOK	STATUS	TS	COMMAND
+
+106 Gajanan	01-OCT-17 DDA	I 02-OCT-17 11.12.03.791000 PM	INSERT SQL>
+
+
+*****Update Operation*****
+SQL+ update lib set nameofbook ='MongoDB' where lib.ro1lno=l0l ; 1 row updated.
+SQL+ select * from lib;
+ROLLNO NAME	DATEOFISS NAMEOFBOOK STATUS
+
+101	Ram	23-SEP-17 MongoDB	I
+102	Sai	10-SEP-17 CN	I
+103	Laxman	28-SEP-17 TOC	I
+ 
+104	Sai	25-AUG-17 SEPM	I
+105	Ganesh	01-SEP-17 IEEE	I
+106	Gajanan	01-OCT-17 DDA	I
+6 rows selected.
+SQL+ select * from lib audit;
+ROLLNO	NAME	DATEOFISS	NAMEOFBOOK	STATUS	TS	COMMAND
+
+106 Gajanan	01-OCT-17 DDA	I	02-OCT-17 11.12.03.791000 PM	INSERT
+101 Ram	23-SEP-17 DBMS	I 02-OCT-17 11.14.21.436000 PM	UPDATE
+
+
+*****Delete Operation*****
+SQL+ delete from lib where ro1lno=l02; 1 row deleted.
+SQL>
+SQL+ select * from lib audit;
+ROLLNO	NAME	DATEOFISS	NAMEOFBOOK	STATUS	TS	COMMAND
+
+106 Gajanan	01-OCT-17 DDA	I	02-OCT-17 11.12.03.791000 PM	INSERT
+101 Ram	23-SEP-17 MongoDB	I	02-OCT-17 11.14.21.436000 PM	UPDATE
+102 Sai	10-SEP-17 CN	I	02-OCT-17 11.16.03.851000 PM	DELETE
+
+SQL+ select * from lib;
+ROLLNO NAME	DATEOFISS NAMEOFBOOK STATUS
+
+101 Ram	23-SEP-17 MongoDB	I
+103	Laxman	28-SEP-17 TOC	I
+104	Sai	25-AUG-17 SEPM	I
+105	Ganesh	01-SEP-17 IEEE	I
+106	Gajanan	01-OCT-17 DDA	I 

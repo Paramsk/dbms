@@ -1,0 +1,7 @@
+select emp_name from works where cmp_name="TCS";
+select employee.emp_name,company.cmp_name from employee,company order by cmp_name asc, emp_name desc;
+update company set city="delhi" where cmp_name="infosys";
+select emp_name from works where salary>(select avg(salary) from works);
+select works.emp_name,street,city from employee,works where cmp_name="techm" and works.emp_name=employee.emp_name and salary>5000;
+alter table manager rename to management;
+alter table company add assets varchar(20);

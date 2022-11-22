@@ -1,0 +1,10 @@
+select distinct branch_name from loan;
+select loan_no from loan where branch_name="akurdi" and amount>12000;
+select borrow.cust_name,loan.loan_no,loan.amount from borrow, loan where borrow.loan_no=loan.loan_no;
+select borrow.cust_name from borrow,loan where branch_name="akurdi"and borrow.loan_no=loan.loan_no order by branch_name;
+select cust_name from loan,borrow where borrow.loan_no=loan.loan_no;
+select avg(balance) from account group by branch_name;
+select count(*),branch_name from account,depositer where account.acc_no=depositer.acc_no;
+select sum(amount) from loan;
+select cust_name,cust_city from customer where cust_name like "%p";
+select distinct cust_city from customer ;
